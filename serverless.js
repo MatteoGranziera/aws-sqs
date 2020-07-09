@@ -9,7 +9,8 @@ const {
   getAccountId,
   getArn,
   getUrl,
-  setAttributes
+  setAttributes,
+  createEventSourceMapping
 } = require('./utils')
 
 const outputsList = ['arn', 'url']
@@ -41,9 +42,16 @@ class AwsSqsQueue extends Component {
     config.arn = arn
     config.url = queueUrl
 
+    const { functionName, batchSize = 1 } = config
+
     this.context.status(`Deploying`)
 
     const sqs = new aws.SQS({
+      region: config.region,
+      credentials: this.context.credentials.aws
+    })
+
+    const lambda = new aws.Lambda({
       region: config.region,
       credentials: this.context.credentials.aws
     })
@@ -56,6 +64,11 @@ class AwsSqsQueue extends Component {
         sqs,
         config: config
       })
+
+      if (functionName) {
+        this.context.debug(`Creating lambda event source mapping`)
+        await createEventSourceMapping({ lambda, functionName, batchSize, sqsArn: arn })
+      }
     } else {
       if (this.state.url === queueUrl) {
         this.context.status(`Updating`)
@@ -72,6 +85,11 @@ class AwsSqsQueue extends Component {
           sqs,
           config: config
         })
+
+        if (functionName) {
+          this.context.debug(`Creating lambda event source mapping`)
+          await createEventSourceMapping({ lambda, functionName, batchSize, sqsArn: arn })
+        }
       }
     }
 

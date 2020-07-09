@@ -35,19 +35,30 @@ const getArn = ({ name, region, accountId }) => {
 
 const createAttributeMap = (config) => {
   const attributeMap = {}
-  if (typeof config.visibilityTimeout !== "undefined") attributeMap.VisibilityTimeout = config.visibilityTimeout.toString()
-  if (typeof config.maximumMessageSize !== "undefined") attributeMap.MaximumMessageSize = config.maximumMessageSize.toString()
-  if (typeof config.messageRetentionPeriod !== "undefined") attributeMap.MessageRetentionPeriod = config.messageRetentionPeriod.toString()
-  if (typeof config.delaySeconds !== "undefined") attributeMap.DelaySeconds = config.delaySeconds.toString()
-  if (typeof config.receiveMessageWaitTimeSeconds !== "undefined") attributeMap.ReceiveMessageWaitTimeSeconds = config.receiveMessageWaitTimeSeconds.toString()
-  if (typeof config.redrivePolicy !== "undefined") attributeMap.RedrivePolicy = JSON.stringify(config.redrivePolicy) || ''
-  if (typeof config.policy !== "undefined") attributeMap.Policy = JSON.stringify(config.policy) || ''
-  if (typeof config.kmsMasterKeyId !== "undefined") attributeMap.KmsMasterKeyId = JSON.stringify(config.kmsMasterKeyId) || ''
-  if (typeof config.kmsDataKeyReusePeriodSeconds !== "undefined") attributeMap.KmsDataKeyReusePeriodSeconds = JSON.stringify(config.kmsDataKeyReusePeriodSeconds) || '300'
+  if (typeof config.visibilityTimeout !== 'undefined')
+    attributeMap.VisibilityTimeout = config.visibilityTimeout.toString()
+  if (typeof config.maximumMessageSize !== 'undefined')
+    attributeMap.MaximumMessageSize = config.maximumMessageSize.toString()
+  if (typeof config.messageRetentionPeriod !== 'undefined')
+    attributeMap.MessageRetentionPeriod = config.messageRetentionPeriod.toString()
+  if (typeof config.delaySeconds !== 'undefined')
+    attributeMap.DelaySeconds = config.delaySeconds.toString()
+  if (typeof config.receiveMessageWaitTimeSeconds !== 'undefined')
+    attributeMap.ReceiveMessageWaitTimeSeconds = config.receiveMessageWaitTimeSeconds.toString()
+  if (typeof config.redrivePolicy !== 'undefined')
+    attributeMap.RedrivePolicy = JSON.stringify(config.redrivePolicy) || ''
+  if (typeof config.policy !== 'undefined')
+    attributeMap.Policy = JSON.stringify(config.policy) || ''
+  if (typeof config.kmsMasterKeyId !== 'undefined')
+    attributeMap.KmsMasterKeyId = JSON.stringify(config.kmsMasterKeyId) || ''
+  if (typeof config.kmsDataKeyReusePeriodSeconds !== 'undefined')
+    attributeMap.KmsDataKeyReusePeriodSeconds =
+      JSON.stringify(config.kmsDataKeyReusePeriodSeconds) || '300'
 
   if (config.fifoQueue) {
-    if (typeof config.kmsDataKeyReusePeriodSeconds !== "undefined") {
-      attributeMap.ContentBasedDeduplication = JSON.stringify(config.contentBasedDeduplication) || 'false'
+    if (typeof config.kmsDataKeyReusePeriodSeconds !== 'undefined') {
+      attributeMap.ContentBasedDeduplication =
+        JSON.stringify(config.contentBasedDeduplication) || 'false'
     }
   }
 
@@ -67,6 +78,15 @@ const createQueue = async ({ sqs, config }) => {
   const { QueueArn: arn } = await sqs.createQueue(params).promise()
   return { arn }
 }
+
+const createEventSourceMapping = ({ lambda, functionName, batchSize, sqsArn }) =>
+  lambda
+    .createEventSourceMapping({
+      EventSourceArn: sqsArn,
+      FunctionName: functionName,
+      BatchSize: batchSize
+    })
+    .promise()
 
 const getAttributes = async (sqs, queueUrl) => {
   const params = {
@@ -97,6 +117,7 @@ const deleteQueue = async ({ sqs, queueUrl }) => {
 
 module.exports = {
   createQueue,
+  createEventSourceMapping,
   deleteQueue,
   getAccountId,
   getArn,
