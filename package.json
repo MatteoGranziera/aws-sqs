@@ -1,7 +1,7 @@
 {
-  "name": "@matteogranzieraorg/aws-sqs",
-  "version": "1.0.0",
-  "main": "./serverless.js",
+  "name": "@matteogranziera94/aws-sqs",
+  "version": "1.0.1",
+  "main": "./src/serverless.js",
   "publishConfig": {
     "access": "public"
   },
@@ -9,19 +9,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix --cache"
   },
-  "author": "Serverless, Inc.",
+  "author": "Matteo Granziera",
   "license": "Apache",
-  "dependencies": {
-    "@serverless/core": "^1.0.0",
-    "aws-sdk": "^2.505.0",
-    "ramda": "^0.26.1"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@serverless/platform-client": "^0.24.0",
+    "aws-sdk": "^2.713.0",
     "babel-eslint": "10.0.2",
     "eslint": "6.1.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.0",
-    "prettier": "^1.18.2"
+    "prettier": "^1.18.2",
+    "serverless": "^1.74.1"
   }
 }

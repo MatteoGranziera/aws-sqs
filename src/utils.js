@@ -1,4 +1,28 @@
+const https = require('https')
 const { clone } = require('ramda')
+const AWS = require('aws-sdk')
+
+const agent = new https.Agent({
+  keepAlive: true
+})
+
+/**
+ * Get AWS SDK Clients
+ * @param {*} credentials
+ * @param {*} region
+ */
+const getClients = (credentials = {}, region) => {
+  AWS.config.update({
+    httpOptions: {
+      agent
+    }
+  })
+
+  const lambda = new AWS.Lambda({ credentials, region })
+  const sqs = new AWS.SQS({ credentials, region })
+  const sts = new AWS.STS({ credentials, region })
+  return { lambda, sqs, sts }
+}
 
 const getDefaults = ({ defaults }) => {
   const response = clone(defaults)
@@ -19,9 +43,8 @@ const getQueue = async ({ sqs, queueUrl }) => {
   return queueAttributes
 }
 
-const getAccountId = async (aws) => {
-  const STS = new aws.STS()
-  const res = await STS.getCallerIdentity({}).promise()
+const getAccountId = async (sts) => {
+  const res = await sts.getCallerIdentity({}).promise()
   return res.Account
 }
 
@@ -88,6 +111,13 @@ const createEventSourceMapping = ({ lambda, functionName, batchSize, sqsArn }) =
     })
     .promise()
 
+const deleteEventSourceMapping = ({ lambda, uuid }) =>
+  lambda
+    .deleteEventSourceMapping({
+      UUID: uuid
+    })
+    .promise()
+
 const getAttributes = async (sqs, queueUrl) => {
   const params = {
     QueueUrl: queueUrl,
@@ -116,9 +146,11 @@ const deleteQueue = async ({ sqs, queueUrl }) => {
 }
 
 module.exports = {
+  getClients,
   createQueue,
   createEventSourceMapping,
   deleteQueue,
+  deleteEventSourceMapping,
   getAccountId,
   getArn,
   getUrl,

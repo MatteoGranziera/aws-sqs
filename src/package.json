@@ -1,0 +1,15 @@
+{
+  "name": "@matteogranziera94/aws-sqs-src",
+  "version": "1.0.0",
+  "main": "./serverless.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Serverless, Inc.",
+  "license": "Apache",
+  "dependencies": {
+    "aws-sdk": "^2.713.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {}
+}

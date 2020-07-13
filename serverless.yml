@@ -1,0 +1,10 @@
+# serverless.component.yml
+
+name: sqs # Required. The name of the Component
+version: 0.0.33 # Required. The version of the Component
+org: matteogranziera # Required. The Serverless Framework org which owns this Component
+description: Deploys Serverless AWS SQS Resource # Optional. The description of the Component
+keywords: aws, serverless, sqs # Optional. The keywords of the Component to make it easier to find at registry.serverless.com
+license: MIT # Optional. The license of the Component code
+
+src: ./src # Required. The directory which contains the Component code
